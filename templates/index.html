@@ -41,17 +41,85 @@ class="container-fluid"
         <div class="col-12" style="margin-top: 10px">
             <div class="card  border-light">
                 <div class="card-body">
-                    <div>
-                        <!-- <el-checkbox size="mini" v-model="filters.private"><i class="fas fa-lock"></i> 私有设备
-                        </el-checkbox> -->
-                    </div>
-                    <div>
-                        <el-checkbox size="mini" v-model="filters.platform.android">
-                            <i class="fab fa-android"></i> 安卓 <small>{{!counts.android}}</small>
-                        </el-checkbox>
-                        <el-checkbox size="mini" v-model="filters.platform.apple">
-                            <i class="fab fa-apple"></i> 苹果 <small>{{!counts.apple}}</el-checkbox>
-                    </div>
+                    <el-row style="margin: 10px 0px">
+                        <el-col :span="2">
+                            <div style="font-size: 15px">品牌</div>
+                        </el-col>
+                        <el-col :span="2">
+                            <div>
+                                <el-checkbox :indeterminate="isBrandIndeterminate" v-model="checkBrandAll"
+                                    @change="handleCheckAllBrandChange">全选</el-checkbox>
+                            </div>
+                        </el-col>
+                        <el-col :span="20">
+                            <div style="margin: 2px 0px 0px 0px">
+                                <el-checkbox-group v-model="checkedBrands" @change="handleCheckedChange">
+                                    <el-checkbox v-for="brand in filtersData.brandFilters" :label="brand"
+                                        :key="brand" />
+                                </el-checkbox-group>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin: 10px 0px">
+                        <el-col :span="2">
+                            <div style="font-size: 15px">Android系统</div>
+                        </el-col>
+                        <el-col :span="2">
+                            <div>
+                                <el-checkbox :indeterminate="isAndroidVersionsIndeterminate"
+                                    v-model="checkAndroidVersionsAll" @change="handleCheckAllAndroidVersionsChange">
+                                    全选</el-checkbox>
+                            </div>
+                        </el-col>
+                        <el-col :span="20">
+                            <div>
+                                <el-checkbox-group v-model="checkedAndroidVersions" @change="handleCheckedChange">
+                                    <el-checkbox v-for="version in filtersData.androidVersionsFilters" :label="version"
+                                        :key="version" />
+                                </el-checkbox-group>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin: 10px 0px">
+                        <el-col :span="2">
+                            <div style="font-size: 15px">IOS系统</div>
+                        </el-col>
+                        <el-col :span="2">
+                            <div>
+                                <el-checkbox :indeterminate="isIosVersionsIndeterminate" v-model="checkIosVersionsAll"
+                                    @change="handleCheckAllIosVersionsChange">
+                                    全选</el-checkbox>
+                            </div>
+                        </el-col>
+                        <el-col :span="20">
+                            <div>
+                                <el-checkbox-group v-model="checkedIosVersions" @change="handleCheckedChange">
+                                    <el-checkbox v-for="version in filtersData.iosVersionsFilters" :label="version"
+                                        :key="version" />
+                                </el-checkbox-group>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin: 10px 0px">
+                        <el-col :span="2">
+                            <div style="font-size: 15px">分辨率</div>
+                        </el-col>
+                        <el-col :span="2">
+                            <div>
+                                <el-checkbox :indeterminate="isDensityIndeterminate" v-model="checkDensityAll"
+                                    @change="handleCheckAllDensityChange">
+                                    全选</el-checkbox>
+                            </div>
+                        </el-col>
+                        <el-col :span="20">
+                            <div>
+                                <el-checkbox-group v-model="checkedDensity" @change="handleCheckedChange">
+                                    <el-checkbox v-for="density in filtersData.densityFilters" :label="density"
+                                        :key="density" />
+                                </el-checkbox-group>
+                            </div>
+                        </el-col>
+                    </el-row>
                 </div>
             </div>
         </div>
@@ -64,7 +132,7 @@ class="container-fluid"
                     <el-button size="mini" disabled>设备离线</el-button>
                 </template>
                 <template v-else-if='"colding" == scope.row.status'>
-                    <el-button disabled :loading="true" size="mini" type="primary">释放中</span>
+                    <el-button disabled :loading="true" size="mini" type="primary">释放中</el-button>
                 </template>
                 <template v-else-if='"busy" == scope.row.status'>
                     <el-button :title="scope.row.userId" style="cursor: not-allowed; background: #f3d19e" size="mini"
@@ -131,7 +199,7 @@ class="container-fluid"
             </template>
         </el-table-column>
 
-       <el-table-column :sort-method="tableSortBy('department')" sortable label="所属部门">
+        <el-table-column :sort-method="tableSortBy('department')" sortable label="所属部门">
             <template slot-scope="scope">
                 <!-- <el-input size="mini"></el-input> -->
                 <atx-edit-inline :readonly="!user.admin" :value="scope.row.department"
@@ -160,296 +228,372 @@ class="container-fluid"
     console.log(admin)
 </script>
 <script>
-    $.getJSON("/api/v1/devices?present=true")
-        .then((ret) => {
-            new Vue({
-                el: "#app",
-                data: Object.assign({
-                    websocketDisconnected: false,
-                    user: {
-                        name: currentUserName,
-                        email: currentUserEmail,
-                        admin: admin,
-                    },
-                    devices: [],
-                    counts: {
-                        android: 0,
-                        apple: 0,
-                    },
-                    filters: {
-                        private: false,
-                        platform: {
-                            apple: false,
-                            android: false,
+    new Vue({
+        el: "#app",
+        data: {
+            websocketDisconnected: false,
+            user: {
+                name: currentUserName,
+                email: currentUserEmail,
+                admin: admin,
+            },
+            checkedAndroidVersions: [],
+            checkAndroidVersionsAll: true,
+            checkedIosVersions: [],
+            checkIosVersionsAll: true,
+            checkedBrands: [],
+            checkBrandAll: true,
+            checkedDensity: [],
+            checkDensityAll: true,
+            devices: [],
+            filterDevices: [],
+        },
+        created() {
+            $.getJSON("/api/v1/devices")
+                .then((ret) => {
+                    this.devices = ret.devices;
+                    this.filterDevices = ret.devices;
+                })
+        },
+        computed: {
+            isBrandIndeterminate() {
+                return this.checkedBrands.length > 0 && this.checkedBrands.length < this.filtersData.brandFilters.length;
+            },
+            isAndroidVersionsIndeterminate() {
+                return this.checkedAndroidVersions.length > 0 && this.checkedAndroidVersions.length < this.filtersData.androidVersionsFilters.length;
+            },
+            isIosVersionsIndeterminate() {
+                return this.checkedIosVersions.length > 0 && this.checkedIosVersions.length < this.filtersData.iosVersionsFilters.length;
+            },
+            isDensityIndeterminate() {
+                return this.checkedDensity.length > 0 && this.checkedDensity.length < this.filtersData.densityFilters.length;
+            },
+            filtersData() {
+                let androidVersionsSet = new Set();
+                let iosVersionsSet = new Set();
+                let brandSet = new Set();
+                let densitySet = new Set();
+                for (let device of this.devices) {
+                    if (device.platform == "android") {
+                        androidVersionsSet.add(device.properties.version);
+                    } else if (device.platform == "ios") {
+                        iosVersionsSet.add(device.properties.version);
+                    }
+                    brandSet.add(device.properties.brand);
+                    densitySet.add(device.properties.density)
+                }
+                this.checkedAndroidVersions = [...androidVersionsSet]
+                this.checkedIosVersions = [...iosVersionsSet]
+                this.checkedBrands = [...brandSet]
+                this.checkedDensity = [...densitySet]
+                return {
+                    androidVersionsFilters: [...androidVersionsSet],
+                    iosVersionsFilters: [...iosVersionsSet],
+                    brandFilters: [...brandSet],
+                    densityFilters: [...densitySet]
+                };
+            },
+            tableData() {
+                let devices = this.orderedDevices.map(v => {
+                    for (const key in v.properties) {
+                        if (v.properties.hasOwnProperty(key)) {
+                            v['prop_' + key] = v.properties[key]
                         }
                     }
-                }, { "devices": ret.devices }),
-                computed: {
-                    tableData() {
-                        let devices = this.orderedDevices.map(v => {
-                            for (const key in v.properties) {
-                                if (v.properties.hasOwnProperty(key)) {
-                                    v['prop_' + key] = v.properties[key]
-                                }
-                            }
-                            let display = v.display || {}
-                            v['display_size'] = display.width + "x" + display.height;
-                            return v;
-                        })
-                        const fp = this.filters.platform
-                        if (Object.values(fp).some(b => b)) {
-                            devices = devices.filter(v => fp[v.platform])
+                    let display = v.display || {}
+                    v['display_size'] = display.width + "x" + display.height;
+                    return v;
+                })
+                return devices;
+            },
+            orderedDevices() {
+                let sortBy = (key) => {
+                    return (a, b) => a[key] > b[key] ? 1 : (b[key] > a[key] ? -1 : 0)
+                }
+
+                let devices = this.filterDevices.map(d => {
+                    return Object.assign(d, this.deviceConvert(d))
+                }).sort(sortBy("order")).reverse()
+                return devices;
+            }
+        },
+        filters: {
+            formatTime(value) {
+                var t = moment(value)
+                return t.format("YYYY-M-D HH:mm:ss");
+            },
+            fromNow(value) {
+                return moment(value).fromNow();
+            },
+            formatDuration(value) {
+                let duration = moment.duration(value, "seconds")
+                return moment.utc(duration.asMilliseconds()).format("HH:mm:ss")
+            },
+            shortString(value) {
+                if (value.length > 10) {
+                    return value.slice(0, 8) + ".."
+                }
+                return value;
+            }
+        },
+        methods: {
+            semverCompare(a, b) {
+                function cmp(as, bs, i, j) {
+                    let va = as[i], vb = bs[j];
+                    if (va == null || vb == null) {
+                        if (va == null && vb == null) {
+                            return 0
                         }
-                        return devices;
-                    },
-                    orderedDevices() {
-                        let sortBy = (key) => {
-                            return (a, b) => a[key] > b[key] ? 1 : (b[key] > a[key] ? -1 : 0)
-                        }
-
-                        let devices = this.devices.map(d => {
-                            return Object.assign(d, this.deviceConvert(d))
-                        }).sort(sortBy("order")).reverse()
-
-                        this.counts.android = 0
-                        this.counts.apple = 0
-                        devices.forEach(d => {
-                            if (d.present) {
-                                if (d.platform == "android") {
-                                    this.counts.android++
-                                } else if (d.platform == "apple") {
-                                    this.counts.apple++
-                                }
-                            }
-                        })
-                        return devices;
-
-                        // Only for reference
-                        return [{
-                            udid: "kjnl-dfljsasdklifjdklsfjlasdflsdfk",
-                            platform: "android",
-                            using: false,
-                            present: true, // present is generated by length of sources
-                            ready: false,
-                            colding: false,
-                            private: false,
-                            userId: "anonymous@domain.com",
-                            group: "ntes",
-                            sources: {
-                                "bad1-131jfla-3313131": {
-                                    name: "raspberry",
-                                    address: "10.0.1.123:7712",
-                                    priority: 2,
-                                },
-                                "7718231-sdljf3lkjsf-sfsdf": {
-                                    name: "wifi",
-                                    address: "10.45.16.71:7912",
-                                    priority: 1
-                                }
-                            },
-                            createdAt: "2018-12-1 12:00:01",
-                            lastUsingAt: "2018-12-1 12:00:01",
-                            properties: {
-                                serial: "17fbd6a",
-                                brand: "sumsung",
-                                model: "SM-G9209",
-                                hwaddr: "90:b6:86:7e:7d:ff",
-                                version: "6.0.1",
-                                sdk: 23,
-                                displayHeight: 2560,
-                                displayWidth: 1440,
-                            },
-                        }]
+                        return va == null ? -1 : 1;
                     }
+                    if (va == vb) {
+                        return cmp(as, bs, i + 1, j + 1)
+                    }
+                    return parseInt(va, 10) - parseInt(vb, 10) > 0 ? 1 : -1
+                }
+
+                let as = a.prop_version.split("."), bs = b.prop_version.split(".");
+                return cmp(as, bs, 0, 0)
+            },
+            handleCheckAllBrandChange() {
+                if (this.checkBrandAll) {
+                    this.checkedBrands = this.filtersData.brandFilters;
+                } else {
+                    this.checkedBrands = [];
+                }
+                this.handleCheckedChange(null);
+            },
+            handleCheckAllAndroidVersionsChange() {
+                if (this.checkAndroidVersionsAll) {
+                    this.checkedAndroidVersions = this.filtersData.androidVersionsFilters;
+                } else {
+                    this.checkedAndroidVersions = [];
+                }
+                this.handleCheckedChange(null);
+            },
+            handleCheckAllIosVersionsChange() {
+                if (this.checkIosVersionsAll) {
+                    this.checkedIosVersions = this.filtersData.iosVersionsFilters;
+                } else {
+                    this.checkedIosVersions = [];
+                }
+                this.handleCheckedChange(null);
+            },
+            handleCheckAllDensityChange() {
+                if (this.checkDensityAll) {
+                    this.checkedDensity = this.filtersData.densityFilters;
+                } else {
+                    this.checkedDensity = [];
+                }
+                this.handleCheckedChange(null);
+            },
+            handleCheckedChange(value) {
+                if (this.filtersData.brandFilters.length > 0) {
+                    this.checkBrandAll = this.checkedBrands.length == this.filtersData.brandFilters.length;
+                }
+                if (this.filtersData.androidVersionsFilters.length > 0) {
+                    this.checkAndroidVersionsAll = this.checkedAndroidVersions.length == this.filtersData.androidVersionsFilters.length;
+                }
+                if (this.filtersData.iosVersionsFilters.length > 0) {
+                    this.checkIosVersionsAll = this.checkedIosVersions.length == this.filtersData.iosVersionsFilters.length;
+                }
+                if (this.filtersData.densityFilters.length > 0) {
+                    this.checkDensityAll = this.checkedDensity.length == this.filtersData.densityFilters.length;
+                }
+                let result = [];
+                for (let device of this.devices) {
+                    let versionMatched = false;
+                    for (let androidVersion of this.checkedAndroidVersions) {
+                        if (device.platform == "android" && device.properties.version == androidVersion) {
+                            versionMatched = true;
+                            break;
+                        }
+                    }
+                    for (let iosVersion of this.checkedIosVersions) {
+                        if (versionMatched) {
+                            break;
+                        }
+                        if (device.platform == "ios" && device.properties.version == iosVersion) {
+                            versionMatched = true;
+                            break;
+                        }
+                    }
+                    if (!versionMatched) {
+                        continue;
+                    }
+                    let brandMatched = false;
+                    for (let brand of this.checkedBrands) {
+                        if (device.properties.brand == brand) {
+                            brandMatched = true;
+                            break;
+                        }
+                    }
+                    if (!brandMatched) {
+                        continue;
+                    }
+                    let densityMatched = false;
+                    for (let density of this.checkedDensity) {
+                        if (device.properties.density == density) {
+                            densityMatched = true;
+                            break;
+                        }
+                    }
+                    if (densityMatched) {
+                        result.push(device);
+                    }
+                }
+                this.filterDevices = result;
+            },
+            tableSortBy(prop, defaultValue) {
+                defaultValue = defaultValue || null;
+                return (a, b) => {
+                    let va = a[prop] || defaultValue, vb = b[prop] || defaultValue;
+                    if (va == vb) return 0;
+                    return va > vb ? 1 : -1
+                }
+            },
+            updatePropertyId(udid, text) { // admin required
+                $.ajax({
+                    url: "/api/v1/devices/" + udid + "/properties",
+                    method: "put",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "propertyId": text,
+                    })
+                }).fail(ret => {
+                    if (ret.status == 400) {
+                        this.$message.error(ret.responseJSON.description)
+                    } else {
+                        this.$message.error(ret.responseText)
+                    }
+                })
+            },
+            updatePropertyName(udid, text) { // admin required
+                $.ajax({
+                    url: "/api/v1/devices/" + udid + "/properties",
+                    method: "put",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "name": text,
+                    })
+                }).fail(ret => {
+                    if (ret.status == 400) {
+                        this.$message.error(ret.responseJSON.description)
+                    } else {
+                        this.$message.error(ret.responseText)
+                    }
+                })
+            },
+            updateDeviceDepartment(udid, text) { // admin required
+                $.ajax({
+                    url: "/api/v1/devices/" + udid,
+                    method: "put",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "department": text,
+                    })
+                }).fail(ret => {
+                    if (ret.status == 400) {
+                        this.$message.error(ret.responseJSON.description)
+                    } else {
+                        this.$message.error(ret.responseText)
+                    }
+                })
+            },
+            formatTimeUsed() {
+                // let duration = moment(this.finishedAt) - moment(this.createdAt);
+                // return moment.utc(duration).format('HH:mm:ss')
+            },
+            deviceAcquire(udid) { // for multi device acquire
+                return $.ajax({
+                    method: "post",
+                    url: "/api/v1/user/devices",
+                    data: JSON.stringify({
+                        "udid": udid,
+                    }),
+                    dataType: "json",
+                })
+                    .done(ret => {
+                        console.log(ret)
+                    })
+            },
+            deviceRelease(udid) {
+                $.ajax({
+                    method: "delete",
+                    url: "/api/v1/user/devices/" + udid,
+                    dataType: "json",
+                })
+            },
+            deviceConvert(device) {
+                if (!device.present) {
+                    return { status: "offline", order: 0, text: "设备离线" }
+                } else if (device.colding) {
+                    return { status: "colding", order: 1, text: "清理中" }
+                } else if (!device.using) {
+                    return { status: "use", order: 2, text: "开始使用" }
+                } else if (device.userId == currentUserEmail) {
+                    return { status: "stop using", order: 3, text: "停止使用" }
+                } else {
+                    return { status: "busy", order: 0.5, text: "忙碌中" }
+                }
+            },
+            deviceStatusName(device) {
+                if (!device.present) {
+                    return "Offline"
+                }
+                if (device.colding) {
+                    return "Colding"
+                }
+                if (!device.using) {
+                    return "Use"
+                }
+                if (device.userId == currentUserEmail) {
+                    return "Stop"
+                }
+                return "Busy"
+            },
+            clickStatus(event, device) {
+                let status = this.deviceStatusName(device)
+                console.log("Status", status)
+                switch (status) {
+                    case "Use":
+                        return true;
+                    case "Stop":
+                        this.deviceRelease(device.udid);
+                        event.preventDefault()
+                        return true
+                    default:
+                        event.preventDefault()
+                }
+                console.log(device.udid)
+            }
+        },
+        components: {
+            "atx-edit-inline": {
+                props: {
+                    value: String,
+                    readonly: Boolean,
                 },
-                filters: {
-                    formatTime(value) {
-                        var t = moment(value)
-                        return t.format("YYYY-M-D HH:mm:ss");
-                    },
-                    fromNow(value) {
-                        return moment(value).fromNow();
-                    },
-                    formatDuration(value) {
-                        let duration = moment.duration(value, "seconds")
-                        return moment.utc(duration.asMilliseconds()).format("HH:mm:ss")
-                    },
-                    shortString(value) {
-                        if (value.length > 10) {
-                            return value.slice(0, 8) + ".."
-                        }
-                        return value;
+                data: function () {
+                    return {
+                        edit: false,
+                        editValue: "",
                     }
                 },
                 methods: {
-                    semverCompare(a, b) {
-                        function cmp(as, bs, i, j) {
-                            let va = as[i], vb = bs[j];
-                            if (va == null || vb == null) {
-                                if (va == null && vb == null) {
-                                    return 0
-                                }
-                                return va == null ? -1 : 1;
-                            }
-                            if (va == vb) {
-                                return cmp(as, bs, i + 1, j + 1)
-                            }
-                            return parseInt(va, 10) - parseInt(vb, 10) > 0 ? 1 : -1
-                        }
-
-                        let as = a.prop_version.split("."), bs = b.prop_version.split(".");
-                        return cmp(as, bs, 0, 0)
+                    update() {
+                        this.$emit("change", this.editValue);
+                        this.edit = false
                     },
-                    tableSortBy(prop, defaultValue) {
-                        defaultValue = defaultValue || null;
-                        return (a, b) => {
-                            let va = a[prop] || defaultValue, vb = b[prop] || defaultValue;
-                            if (va == vb) return 0;
-                            return va > vb ? 1 : -1
-                        }
-                    },
-                    updatePropertyId(udid, text) { // admin required
-                        $.ajax({
-                            url: "/api/v1/devices/" + udid + "/properties",
-                            method: "put",
-                            contentType: "application/json",
-                            data: JSON.stringify({
-                                "propertyId": text,
-                            })
-                        }).fail(ret => {
-                            if (ret.status == 400) {
-                                this.$message.error(ret.responseJSON.description)
-                            } else {
-                                this.$message.error(ret.responseText)
-                            }
+                    onEdit() {
+                        this.edit = true
+                        this.editValue = this.value;
+                        this.$nextTick(() => {
+                            this.$refs.input.focus()
                         })
-                    },
-                    updatePropertyName(udid, text) { // admin required
-                        $.ajax({
-                            url: "/api/v1/devices/" + udid + "/properties",
-                            method: "put",
-                            contentType: "application/json",
-                            data: JSON.stringify({
-                                "name": text,
-                            })
-                        }).fail(ret => {
-                            if (ret.status == 400) {
-                                this.$message.error(ret.responseJSON.description)
-                            } else {
-                                this.$message.error(ret.responseText)
-                            }
-                        })
-                    },
-                    updateDeviceDepartment(udid, text) { // admin required
-                        $.ajax({
-                            url: "/api/v1/devices/" + udid,
-                            method: "put",
-                            contentType: "application/json",
-                            data: JSON.stringify({
-                                "department": text,
-                            })
-                        }).fail(ret => {
-                            if (ret.status == 400) {
-                                this.$message.error(ret.responseJSON.description)
-                            } else {
-                                this.$message.error(ret.responseText)
-                            }
-                        })
-                    },
-                    formatTimeUsed() {
-                        // let duration = moment(this.finishedAt) - moment(this.createdAt);
-                        // return moment.utc(duration).format('HH:mm:ss')
-                    },
-                    deviceAcquire(udid) { // for multi device acquire
-                        return $.ajax({
-                            method: "post",
-                            url: "/api/v1/user/devices",
-                            data: JSON.stringify({
-                                "udid": udid,
-                            }),
-                            dataType: "json",
-                        })
-                            .done(ret => {
-                                console.log(ret)
-                            })
-                    },
-                    deviceRelease(udid) {
-                        $.ajax({
-                            method: "delete",
-                            url: "/api/v1/user/devices/" + udid,
-                            dataType: "json",
-                        })
-                    },
-                    deviceConvert(device) {
-                        if (!device.present) {
-                            return { status: "offline", order: 0, text: "设备离线" }
-                        } else if (device.colding) {
-                            return { status: "colding", order: 1, text: "清理中" }
-                        } else if (!device.using) {
-                            return { status: "use", order: 2, text: "开始使用" }
-                        } else if (device.userId == currentUserEmail) {
-                            return { status: "stop using", order: 3, text: "停止使用" }
-                        } else {
-                            return { status: "busy", order: 0.5, text: "忙碌中" }
-                        }
-                    },
-                    deviceStatusName(device) {
-                        if (!device.present) {
-                            return "Offline"
-                        }
-                        if (device.colding) {
-                            return "Colding"
-                        }
-                        if (!device.using) {
-                            return "Use"
-                        }
-                        if (device.userId == currentUserEmail) {
-                            return "Stop"
-                        }
-                        return "Busy"
-                    },
-                    clickStatus(event, device) {
-                        let status = this.deviceStatusName(device)
-                        console.log("Status", status)
-                        switch (status) {
-                            case "Use":
-                                return true;
-                            case "Stop":
-                                this.deviceRelease(device.udid);
-                                event.preventDefault()
-                                return true
-                            default:
-                                event.preventDefault()
-                        }
-                        console.log(device.udid)
                     }
                 },
-                components: {
-                    "atx-edit-inline": {
-                        props: {
-                            value: String,
-                            readonly: Boolean,
-                        },
-                        data: function () {
-                            return {
-                                edit: false,
-                                editValue: "",
-                            }
-                        },
-                        methods: {
-                            update() {
-                                this.$emit("change", this.editValue);
-                                this.edit = false
-                            },
-                            onEdit() {
-                                this.edit = true
-                                this.editValue = this.value;
-                                this.$nextTick(() => {
-                                    this.$refs.input.focus()
-                                })
-                            }
-                        },
-                        template: `
+                template: `
                         <div>
                             <form  v-if="edit" class="input-group input-group-sm" @submit.prevent="update">
                                 <input @keyup.esc="edit=false" ref="input" class="form-control" v-model="editValue">
@@ -463,44 +607,43 @@ class="container-fluid"
                                 {{!value}} <i v-if="!readonly" @click="onEdit" class="fas fa-edit cursor-pointer"></i>
                             </div>
                         </div>`
-                    }
-                },
-                mounted() {
-                    let scheme = location.protocol === 'https' ? 'wss' : 'ws';
-                    let wsURL = scheme + "://" + location.host + "/websocket/devicechanges";
-                    let ws = new WebSocket(wsURL);
-                    let refreshKey = null;
-                    ws.onopen = (evt) => {
-                        console.log("Websocket Connected")
-                        refreshKey = setInterval(() => {
-                            ws.send("ping")
-                        }, 5000)
-                    }
+            }
+        },
+        mounted() {
+            let scheme = location.protocol === 'https' ? 'wss' : 'ws';
+            let wsURL = scheme + "://" + location.host + "/websocket/devicechanges";
+            let ws = new WebSocket(wsURL);
+            let refreshKey = null;
+            ws.onopen = (evt) => {
+                console.log("Websocket Connected")
+                refreshKey = setInterval(() => {
+                    ws.send("ping")
+                }, 5000)
+            }
 
-                    ws.onmessage = (evt) => {
-                        let m = JSON.parse(evt.data);
-                        let isUpdate = this.devices.some((v) => {
-                            return v.udid == m.data.udid;
-                        })
-                        if (isUpdate) {
-                            this.devices = this.devices.map((v) => {
-                                console.log(v.udid)
-                                if (v.udid == m.data.udid) {
-                                    return m.data
-                                }
-                                return v
-                            })
-                        } else {
-                            this.devices.unshift(m.data);
+            ws.onmessage = (evt) => {
+                let m = JSON.parse(evt.data);
+                let isUpdate = this.filterDevices.some((v) => {
+                    return v.udid == m.data.udid;
+                })
+                if (isUpdate) {
+                    this.filterDevices = this.filterDevices.map((v) => {
+                        console.log(v.udid)
+                        if (v.udid == m.data.udid) {
+                            return m.data
                         }
-                    }
-                    ws.onclose = (evt) => {
-                        console.log("Websocket closed")
-                        this.websocketDisconnected = true
-                        clearInterval(refreshKey)
-                    }
+                        return v
+                    })
+                } else {
+                    this.filterDevices.unshift(m.data);
                 }
-            })
-        })
+            }
+            ws.onclose = (evt) => {
+                console.log("Websocket closed")
+                this.websocketDisconnected = true
+                clearInterval(refreshKey)
+            }
+        }
+    })
 </script>
 {% end %}
