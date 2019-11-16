@@ -238,13 +238,13 @@ class="container-fluid"
                 admin: admin,
             },
             checkedAndroidVersions: [],
-            checkAndroidVersionsAll: true,
+            checkAndroidVersionsAll: false,
             checkedIosVersions: [],
-            checkIosVersionsAll: true,
+            checkIosVersionsAll: false,
             checkedBrands: [],
-            checkBrandAll: true,
+            checkBrandAll: false,
             checkedDensity: [],
-            checkDensityAll: true,
+            checkDensityAll: false,
             devices: [],
             filterDevices: [],
         },
@@ -285,10 +285,6 @@ class="container-fluid"
                     brandSet.add(device.properties.brand);
                     densitySet.add(device.properties.density)
                 }
-                this.checkedAndroidVersions = [...androidVersionsSet]
-                this.checkedIosVersions = [...iosVersionsSet]
-                this.checkedBrands = [...brandSet]
-                this.checkedDensity = [...densitySet]
                 return {
                     androidVersionsFilters: [...androidVersionsSet],
                     iosVersionsFilters: [...iosVersionsSet],
@@ -403,45 +399,38 @@ class="container-fluid"
                 if (this.filtersData.densityFilters.length > 0) {
                     this.checkDensityAll = this.checkedDensity.length == this.filtersData.densityFilters.length;
                 }
+                if (!this.checkBrandAll && !this.checkAndroidVersionsAll && !this.checkIosVersionsAll && !this.checkDensityAll) {
+                    this.filterDevices = this.devices;
+                    return;
+                }
                 let result = [];
                 for (let device of this.devices) {
-                    let versionMatched = false;
+                    let matched = false;
                     for (let androidVersion of this.checkedAndroidVersions) {
                         if (device.platform == "android" && device.properties.version == androidVersion) {
-                            versionMatched = true;
+                            matched = true;
                             break;
                         }
                     }
                     for (let iosVersion of this.checkedIosVersions) {
-                        if (versionMatched) {
-                            break;
-                        }
                         if (device.platform == "ios" && device.properties.version == iosVersion) {
-                            versionMatched = true;
+                            matched = true;
                             break;
                         }
                     }
-                    if (!versionMatched) {
-                        continue;
-                    }
-                    let brandMatched = false;
                     for (let brand of this.checkedBrands) {
                         if (device.properties.brand == brand) {
-                            brandMatched = true;
+                            matched = true;
                             break;
                         }
                     }
-                    if (!brandMatched) {
-                        continue;
-                    }
-                    let densityMatched = false;
                     for (let density of this.checkedDensity) {
                         if (device.properties.density == density) {
-                            densityMatched = true;
+                            matched = true;
                             break;
                         }
                     }
-                    if (densityMatched) {
+                    if (matched) {
                         result.push(device);
                     }
                 }
