@@ -405,6 +405,9 @@ class="container-fluid"
                 }
                 let result = [];
                 for (let device of this.devices) {
+                    if (typeof device.properties == "undefined" || device.properties == null || device.properties == "") {
+                        continue;
+                    }
                     let matched = false;
                     for (let androidVersion of this.checkedAndroidVersions) {
                         if (device.platform == "android" && device.properties.version == androidVersion) {
