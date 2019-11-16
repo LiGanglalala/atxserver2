@@ -274,6 +274,9 @@ class="container-fluid"
                 let brandSet = new Set();
                 let densitySet = new Set();
                 for (let device of this.devices) {
+                    if (typeof device.properties == "undefined" || device.properties == null || device.properties == "") {
+                        continue;
+                    }
                     if (device.platform == "android") {
                         androidVersionsSet.add(device.properties.version);
                     } else if (device.platform == "ios") {
