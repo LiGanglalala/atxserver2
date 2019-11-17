@@ -279,7 +279,7 @@ class="container-fluid"
                     }
                     if (device.platform == "android") {
                         androidVersionsSet.add(device.properties.version);
-                    } else if (device.platform == "ios") {
+                    } else if (device.platform == "apple") {
                         iosVersionsSet.add(device.properties.version);
                     }
                     brandSet.add(device.properties.brand);
@@ -416,7 +416,7 @@ class="container-fluid"
                         }
                     }
                     for (let iosVersion of this.checkedIosVersions) {
-                        if (device.platform == "ios" && device.properties.version == iosVersion) {
+                        if (device.platform == "apple" && device.properties.version == iosVersion) {
                             matched = true;
                             break;
                         }
