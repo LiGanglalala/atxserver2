@@ -41,7 +41,7 @@ class="container-fluid"
         <div class="col-12" style="margin-top: 10px">
             <div class="card  border-light">
                 <div class="card-body">
-                    <el-row style="margin: 10px 0px">
+                    <el-row style="margin-top: 10px">
                         <el-col :span="2">
                             <div style="font-size: 15px">品牌</div>
                         </el-col>
@@ -52,7 +52,7 @@ class="container-fluid"
                             </div>
                         </el-col>
                         <el-col :span="20">
-                            <div style="margin: 2px 0px 0px 0px">
+                            <div style="margin-top: 2px">
                                 <el-checkbox-group v-model="checkedBrands" @change="handleCheckedChange">
                                     <el-checkbox v-for="brand in filtersData.brandFilters" :label="brand"
                                         :key="brand" />
@@ -60,7 +60,7 @@ class="container-fluid"
                             </div>
                         </el-col>
                     </el-row>
-                    <el-row style="margin: 10px 0px">
+                    <el-row style="margin-top: 10px">
                         <el-col :span="2">
                             <div style="font-size: 15px">Android系统</div>
                         </el-col>
@@ -72,7 +72,7 @@ class="container-fluid"
                             </div>
                         </el-col>
                         <el-col :span="20">
-                            <div>
+                            <div style="margin-top: 2px">
                                 <el-checkbox-group v-model="checkedAndroidVersions" @change="handleCheckedChange">
                                     <el-checkbox v-for="version in filtersData.androidVersionsFilters" :label="version"
                                         :key="version" />
@@ -80,7 +80,7 @@ class="container-fluid"
                             </div>
                         </el-col>
                     </el-row>
-                    <el-row style="margin: 10px 0px">
+                    <el-row style="margin-top: 10px">
                         <el-col :span="2">
                             <div style="font-size: 15px">IOS系统</div>
                         </el-col>
@@ -92,7 +92,7 @@ class="container-fluid"
                             </div>
                         </el-col>
                         <el-col :span="20">
-                            <div>
+                            <div style="margin-top: 2px">
                                 <el-checkbox-group v-model="checkedIosVersions" @change="handleCheckedChange">
                                     <el-checkbox v-for="version in filtersData.iosVersionsFilters" :label="version"
                                         :key="version" />
@@ -100,7 +100,7 @@ class="container-fluid"
                             </div>
                         </el-col>
                     </el-row>
-                    <el-row style="margin: 10px 0px">
+                    <el-row style="margin-top: 10px">
                         <el-col :span="2">
                             <div style="font-size: 15px">分辨率</div>
                         </el-col>
@@ -112,7 +112,7 @@ class="container-fluid"
                             </div>
                         </el-col>
                         <el-col :span="20">
-                            <div>
+                            <div style="margin-top: 2px">
                                 <el-checkbox-group v-model="checkedDensity" @change="handleCheckedChange">
                                     <el-checkbox v-for="density in filtersData.densityFilters" :label="density"
                                         :key="density" />
@@ -251,353 +251,6 @@ class="container-fluid"
         created() {
             $.getJSON("/api/v1/devices")
                 .then((ret) => {
-                    ret.devices = [
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vivo",
-                "density":"1080x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"9"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vivosd",
-                "density":"1081x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"8"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vivosdqr",
-                "density":"10812x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"4"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"viqr",
-                "density":"1012x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"1"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vi134qr",
-                "density":"10112x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"2"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vi231qe34qr",
-                "density":"10112x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"3"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vi231q13241324e34qr",
-                "density":"10112x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"4"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vi231q13qerqer241324e34qr",
-                "density":"101112x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"55"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vi231qeqwr13qerqer241324e34qr",
-                "density":"1011112x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"515"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"vi23qr",
-                "density":"1011112x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"515"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"3qerqer241324e34qr",
-                "density":"1011112x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"5543"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"v234qr",
-                "density":"16666x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"51235"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"v134s56gqr",
-                "density":"16667945x2280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"511324235"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"4554s56gqr",
-                "density":"16667945x2134280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"98764235"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        },
-        {
-            "colding":false,
-            "createdAt":"2019-11-16T22:44:59.218000",
-            "idleTimeout":600,
-            "lastActivatedAt":"2019-11-16T22:52:22.213000",
-            "owner":null,
-            "platform":"android",
-            "present":true,
-            "properties":{
-                "brand":"4556789qr",
-                "density":"1660005x2134280",
-                "model":"vivo X21A",
-                "name":"vivo X21",
-                "serial":"e2f5c29f",
-                "version":"98111114235"
-            },
-            "udid":"e2f5c29f",
-            "updatedAt":"2019-11-17T17:13:45.615000",
-            "userId":null,
-            "using":false,
-            "usingBeganAt":"2019-11-16T22:49:25.561000",
-            "usingDuration":208.017
-        }
-    ];
                     this.devices = ret.devices;
                     this.filterDevices = ret.devices;
                 })
